@@ -14,6 +14,8 @@ import matplotlib.pyplot as plt
 def load_wav_snf(path):
     wav, sr = sf.read(path, dtype=np.float32)
     return wav
+# load_wav_snf(path): 加载音频文件并返回音频数据和采样率。
+# sf.read(path, dtype=np.float32): 使用 soundfile 库读取音频文件，dtype=np.float32 指定数据类型为32位浮点数。
 
 def preemphasis(wav, k=0.97):
     return signal.lfilter([1, -k], [1], wav)
