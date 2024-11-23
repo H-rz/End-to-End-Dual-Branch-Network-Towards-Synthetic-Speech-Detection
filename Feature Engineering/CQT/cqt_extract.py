@@ -8,6 +8,8 @@ from scipy import signal
 import librosa.display
 import matplotlib.pyplot as plt
 
+# 这段代码的主要功能是从音频文件中提取恒定Q变换特征，并将这些特征保存为 .npy 文件。
+# 代码分为几个部分：加载音频文件、预处理音频、计算CQT特征、保存特征、以及可视化CQT特征。
 
 def load_wav_snf(path):
     wav, sr = sf.read(path, dtype=np.float32)
