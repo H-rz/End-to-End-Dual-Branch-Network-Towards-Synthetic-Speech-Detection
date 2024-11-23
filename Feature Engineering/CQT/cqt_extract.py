@@ -19,24 +19,28 @@ def load_wav_snf(path):
 
 def preemphasis(wav, k=0.97):
     return signal.lfilter([1, -k], [1], wav)
+# preemphasis(wav, k=0.97): 对音频信号进行预加重处理，增强高频部分。
+# signal.lfilter([1, -k], [1], wav): 使用 scipy.signal 库的 lfilter 函数进行一阶高通滤波。
 
 def logpowcqt(wav_path, sr=16000, hop_length=512, n_bins=528, bins_per_octave=48, window="hann", fmin=3.5,pre_emphasis=0.97, ref=1.0, amin=1e-30, top_db=None):
-    wav = load_wav_snf(wav_path)
+    wav = load_wav_snf(wav_path) #加载音频文件
     if pre_emphasis is not None:
-        wav = preemphasis(wav, k=pre_emphasis)
+        wav = preemphasis(wav, k=pre_emphasis) #对音频信号进行预加重处理
+    # 计算CQT特征
     cqtfeats = librosa.cqt(y=wav, sr=sr, hop_length=hop_length, n_bins=n_bins, bins_per_octave=bins_per_octave, window=window, fmin=fmin)
-    magcqt = np.abs(cqtfeats)
-    powcqt = np.square(magcqt)
-    logpowcqt = librosa.power_to_db(powcqt, ref, amin, top_db)
+    magcqt = np.abs(cqtfeats) # 计算CQT特征的幅度
+    powcqt = np.square(magcqt) #计算CQT特征的功率。
+    logpowcqt = librosa.power_to_db(powcqt, ref, amin, top_db) #将功率谱转换为对数功率谱
     return logpowcqt
 
 
-if __name__ == '__main__':
+if __name__ == '__main__': #确保代码在作为脚本运行时执行
+    # 打开文件并读取内容
     with open('LA/ASVspoof2019_LA_cm_protocols/ASVspoof2019.LA.cm.train.trn.txt', 'r') as f:
-        audio_info = [info.strip().split() for info in f.readlines()]
-    out = 'CQTFeatures/train/'
-    for i in range(len(audio_info)):
-        speakerid, utterance_id, _, fake_type, label = audio_info[i]
+        audio_info = [info.strip().split() for info in f.readlines()] #读取文件内容并按行分割
+    out = 'CQTFeatures/train/' #设置输出目录
+    for i in range(len(audio_info)): #遍历音频信息列表
+        speakerid, utterance_id, _, fake_type, label = audio_info[i] #解析音频信息
         utterance_path = 'LA/ASVspoof2019_LA_train/flac/' + utterance_id + '.flac'
         cqt = logpowcqt(utterance_path, sr=16000, n_bins=100,hop_length=512, bins_per_octave=12,window='hann', pre_emphasis=0.97, fmin=1)
         out_cqt = out + utterance_id + '.npy'
