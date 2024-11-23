@@ -41,7 +41,7 @@ if __name__ == '__main__': #确保代码在作为脚本运行时执行
     out = 'CQTFeatures/train/' #设置输出目录
     for i in range(len(audio_info)): #遍历音频信息列表
         speakerid, utterance_id, _, fake_type, label = audio_info[i] #解析音频信息
-        utterance_path = 'LA/ASVspoof2019_LA_train/flac/' + utterance_id + '.flac'
+        utterance_path = 'LA/ASVspoof2019_LA_train/flac/' + utterance_id + '.flac' #构建音频文件路径
         cqt = logpowcqt(utterance_path, sr=16000, n_bins=100,hop_length=512, bins_per_octave=12,window='hann', pre_emphasis=0.97, fmin=1)
         out_cqt = out + utterance_id + '.npy'
         np.save(out_cqt,cqt.astype(np.float32))
